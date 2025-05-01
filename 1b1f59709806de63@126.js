@@ -117,6 +117,6 @@ export default function define(runtime, observer) {
   main.variable(observer("d3")).define("d3", ["require"], _d3);
   const child1 = runtime.module(define1);
   main.import("legend", child1);
-  main.variable(observer()).define(["Plot","stateMesh","walmarts"], _9);
+  // main.variable(observer()).define(["Plot","stateMesh","walmarts"], _9);
   return main;
 }
