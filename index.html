@@ -49,6 +49,15 @@
     <div id="map-viz"></div>
   </section>
 
+    <!-- Word Visualization -->
+  <section>
+    <h2>Word Cloud Visualization</h2>
+    <div class="description">
+      <p>INSERT TEXT HERE — Describe what the map shows, what each hexagon represents, and how distance or color is encoded.</p>
+    </div>
+    <div id="word-viz"></div>
+  </section>
+
   <!-- Moon Visualization -->
   <section>
     <h2>Moon Visualization</h2>
@@ -166,6 +175,14 @@
     import {Runtime, Inspector} from "./runtime.js";
     const runtimeMap = new Runtime();
     runtimeMap.module(define, Inspector.into(document.querySelector("#map-viz")));
+  </script>
+
+    <!-- WORD MODULE -->
+  <script type="module">
+    import define from "./WORDindex.js";
+    import {Runtime, Inspector} from "./runtime.js";
+    const runtimeMap = new Runtime();
+    runtimeMap.module(define, Inspector.into(document.querySelector("#word-viz")));
   </script>
 
   <!-- MOON MODULE -->
