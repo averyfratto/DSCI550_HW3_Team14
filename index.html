@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <title>Combined Visualizations</title>
@@ -7,8 +9,7 @@
     body {
       font-family: Arial, sans-serif;
       margin: 40px;
-      line-height: 1.6;
-      background-color: #e6f2ff; /* light blue */
+      background-color: #e6f2ff; /* Light blue background */
       color: #222;
     }
 
@@ -52,83 +53,40 @@
     }
   </style>
 </head>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <title>Combined Visualizations</title>
-  <script src="d3.js"></script>
-  <link rel="stylesheet" type="text/css" href="./inspector.css">
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 40px;
-      line-height: 1.6;
-    }
-    section {
-      margin-bottom: 80px;
-    }
-    .description {
-      margin-bottom: 20px;
-      font-size: 16px;
-      color: #333;
-    }
-  </style>
-</head>
 <body>
 
   <h1>All Visualizations</h1>
 
-  <div class="description">
-    <!-- Site-wide intro -->
-    <p><strong>Overview:</strong> INSERT TEXT HERE — Describe the purpose of this dashboard or your project goals.</p>
-    <p><strong>Data Sources:</strong> INSERT TEXT HERE — Explain where the data comes from and any preprocessing steps.</p>
-  </div>
-
   <!-- Pie Chart Section -->
   <section>
     <h2>Distribution of Topic Locations for All 50 States + D.C.</h2>
-    <div class="description">
-      <p>INSERT TEXT HERE — Explain what the pie chart represents, how the data was grouped, and any patterns or surprises.</p>
-    </div>
+    <p class="description">INSERT TEXT HERE: Describe what this pie chart shows, how to read it, and what insights can be gained.</p>
     <div id="chart"></div>
   </section>
 
   <!-- Map Visualization -->
   <section>
     <h2>Map Visualization</h2>
-    <div class="description">
-      <p>INSERT TEXT HERE — Describe what the map shows, what each hexagon represents, and how distance or color is encoded.</p>
-    </div>
+    <p class="description">INSERT TEXT HERE: Explain the purpose of the map, any patterns viewers should notice, and what it represents.</p>
     <div id="map-viz"></div>
   </section>
 
   <!-- Moon Visualization -->
   <section>
     <h2>Moon Visualization</h2>
-    <div class="description">
-      <p>INSERT TEXT HERE — Explain what the moon visualization communicates and why it's relevant to your data or narrative.</p>
-    </div>
+    <p class="description">INSERT TEXT HERE: Explain what the moon symbols represent, how the visualization works, and why it's interesting.</p>
     <div id="moon-viz"></div>
   </section>
 
   <!-- Scatterplot Visualization -->
   <section>
     <h2>Scatterplots of Witness Count, Binge Drinking, Semantic Similarity, and Fuzzy Similarity</h2>
-    <div class="description">
-      <p>INSERT TEXT HERE — Summarize what each axis represents in the scatterplot(s), and what insight you hope viewers gain.</p>
-    </div>
+    <p class="description">INSERT TEXT HERE: Describe the scatterplots, what the axes show, and how to interpret the trends or clusters.</p>
     <div id="scatterplot-viz"></div>
   </section>
 
-  <div class="description">
-    <!-- Optional closing summary or reflection -->
-    <p><strong>Conclusion:</strong> INSERT TEXT HERE — Wrap up with any final insights, takeaways, or next steps for this research.</p>
-  </div>
-
   <!-- PIE CHART SCRIPT -->
   <script type="text/javascript">
-    // (Pie chart script remains unchanged)
     const w = 1000;
     const h = 900;
     const padding = 20;
@@ -238,22 +196,23 @@
     runtimeScatter.module(define, Inspector.into(document.querySelector("#scatterplot-viz")));
   </script>
 
+  <!-- Scroll Animation Script -->
+  <script>
+    const sections = document.querySelectorAll("section");
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("visible");
+        }
+      });
+    }, {
+      threshold: 0.1
+    });
+
+    sections.forEach(section => {
+      observer.observe(section);
+    });
+  </script>
+
 </body>
 </html>
-<script>
-  // Reveal sections on scroll
-  const sections = document.querySelectorAll("section");
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add("visible");
-      }
-    });
-  }, {
-    threshold: 0.1
-  });
-
-  sections.forEach(section => {
-    observer.observe(section);
-  });
-</script>
