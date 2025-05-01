@@ -100,19 +100,6 @@ function _d3(require){return(
 require("d3@7", "d3-hexbin@0.2")
 )}
 
-function _9(Plot,stateMesh,walmarts){return(
-Plot.plot({
-  projection: "albers-usa",
-  color: {scheme: "Spectral"},
-  marks: [
-    Plot.geo(stateMesh, {strokeOpacity: 0.25}),
-    Plot.dot(walmarts, Plot.hexbin(
-      {fill: "mean", r: "count"},
-      {x: "longitude", y: "latitude", binWidth: 15, fill: "distance_nearest_pow", stroke: "currentColor", strokeWidth: 0.5}
-    ))
-  ]
-})
-)}
 
 export default function define(runtime, observer) {
   const main = runtime.module();
