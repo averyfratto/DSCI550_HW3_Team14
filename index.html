@@ -44,7 +44,7 @@
   <section>
     <h2>Map Visualization</h2>
     <div class="description">
-      <p>INSERT TEXT HERE — Describe what the map shows, what each hexagon represents, and how distance or color is encoded.</p>
+      <p>The map below shows each haunted sighting, with larger points representing cluters of haunted sightings, and the color showing proximity to places of worship. We can see a correlational trend, where clusters of haunted sightings are close to places of worship- Southern California being a big example.</p>
     </div>
     <div id="map-viz"></div>
   </section>
@@ -192,7 +192,7 @@
   <script type="module">
     import define from "./WORDindex.js";
     import {Runtime, Inspector} from "./runtime.js";
-    const runtimeMap = new Runtime();
+    const runtimeWord = new Runtime();
     runtimeWird.module(define, Inspector.into(document.querySelector("#word-viz")));
   </script>
 
