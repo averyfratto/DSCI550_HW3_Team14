@@ -1,99 +1,113 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>Pie Chart: Topic Locations by State</title>
-  <script type="text/javascript" src="d3.js"></script>
-  <style type="text/css">
+  <meta charset="utf-8" />
+  <title>Combined Visualizations</title>
+  <script src="d3.js"></script>
+  <link rel="stylesheet" type="text/css" href="./inspector.css">
+  <style>
     body {
       font-family: Arial, sans-serif;
+      margin: 40px;
+    }
+    section {
+      margin-bottom: 80px;
     }
   </style>
 </head>
 <body>
 
-<h1>Distribution of Topic Locations for All 50 States + D.C.</h1>
+  <h1>All Visualizations</h1>
 
-<div id="chart"></div>
+  <!-- Pie Chart Section -->
+  <section>
+    <h2>Distribution of Topic Locations for All 50 States + D.C.</h2>
+    <div id="chart"></div>
+  </section>
 
-<script type="text/javascript">
+  <!-- Map Visualization -->
+  <section>
+    <h2>Map Visualization</h2>
+    <div id="map-viz"></div>
+  </section>
 
-const w = 1000;
-const h = 900;
-const padding = 20;
+  <!-- Moon Visualization -->
+  <section>
+    <h2>Moon Visualization</h2>
+    <div id="moon-viz"></div>
+  </section>
 
-// d3.scaleOrdinal(d3.schemeObservable10) can only be used for 10 colors so we use d3.scaleSequential
-let color = d3.scaleSequential() 
-    .domain([0, 50])  // 51 colors
-    .interpolator(d3.interpolateRainbow);
+  <!-- Scatterplot Visualization -->
+  <section>
+    <h2>Scatterplots of Witness Count, Binge Drinking, Semantic Similarity, and Fuzzy Similarity</h2>
+    <div id="scatterplot-viz"></div>
+  </section>
 
-d3.json("FINAL_HW2_EXTRACT_DATASET_subset.json").then(data => {
+  <!-- PIE CHART SCRIPT -->
+  <script type="text/javascript">
+    const w = 1000;
+    const h = 900;
+    const padding = 20;
 
-    // Aggregate: count number of topic locations per state
-    const datasetState = d3.rollup(data, d => d.length, d => d.state);
+    let color = d3.scaleSequential()
+      .domain([0, 50])
+      .interpolator(d3.interpolateRainbow);
 
-    // Convert Map to array
-    const pieDataArray = Array.from(datasetState, ([key, value]) => ({ key, value }));
+    d3.json("FINAL_HW2_EXTRACT_DATASET_subset.json").then(data => {
+      const datasetState = d3.rollup(data, d => d.length, d => d.state);
+      const pieDataArray = Array.from(datasetState, ([key, value]) => ({ key, value }));
+      pieDataArray.sort((a, b) => d3.ascending(a.key, b.key));
 
-    console.log(pieDataArray);          // array of data objects
+      const svg1 = d3.select("#chart")
+        .append("svg")
+        .attr("width", w)
+        .attr("height", h);
 
-    // Sort alphabetically
-    pieDataArray.sort((a, b) => d3.ascending(a.key, b.key));
+      const outerRadius = (h / 2) * 0.8;
+      const innerRadius = outerRadius * 0.5;
 
-    // Create SVG
-    const svg1 = d3.select("#chart")
-                  .append("svg")
-                  .attr("width", w)
-                  .attr("height", h);
+      const arc = d3.arc()
+        .innerRadius(innerRadius)
+        .outerRadius(outerRadius);
 
-    const outerRadius = (h / 2) * 0.8;
-    const innerRadius = outerRadius * 0.5;
+      const pie = d3.pie()
+        .value(d => d.value);
 
-    const arc = d3.arc()
-                  .innerRadius(innerRadius)
-                  .outerRadius(outerRadius);
+      const arcs = svg1.selectAll("g.arc")
+        .data(pie(pieDataArray))
+        .enter()
+        .append("g")
+        .attr("class", "arc")
+        .attr("transform", "translate(" + (w / 2 - 50) + "," + (h / 2) + ")");
 
-    const pie = d3.pie()
-                  .value(d => d.value);
-
-    const arcs = svg1.selectAll("g.arc")
-                     .data(pie(pieDataArray))
-                     .enter()
-                     .append("g")
-                     .attr("class", "arc")
-                     .attr("transform", "translate(" + (w / 2 - 50) + "," + (h / 2) + ")");
-
-    // Draw arc paths
-    arcs.append("path")
+      arcs.append("path")
         .attr("fill", (d, i) => color(i))
         .attr("d", arc);
 
-    // Add state names rotated properly
-    arcs.append("text")
-        .filter(d => (d.endAngle - d.startAngle) > 0.06) // show only if slice is big enough
+      arcs.append("text")
+        .filter(d => (d.endAngle - d.startAngle) > 0.06)
         .attr("transform", function(d) {
-            const [x, y] = arc.centroid(d);
-            const angle = (d.startAngle + d.endAngle) / 2;
-            const rotation = (angle * 180 / Math.PI) - 90;
-            const labelOffset = 1.1;
-            return `translate(${x * labelOffset}, ${y * labelOffset}) rotate(${rotation})`;
+          const [x, y] = arc.centroid(d);
+          const angle = (d.startAngle + d.endAngle) / 2;
+          const rotation = (angle * 180 / Math.PI) - 90;
+          const labelOffset = 1.1;
+          return `translate(${x * labelOffset}, ${y * labelOffset}) rotate(${rotation})`;
         })
         .attr("dy", "0.35em")
         .attr("text-anchor", "middle")
         .attr("font-size", "11px")
         .style("font-weight", "bold")
         .text(d => {
-            const total = d3.sum(pieDataArray, d => d.value);
-            const percent = (d.data.value / total) * 100;
-            return `${d.data.key} (${percent.toFixed(1)}%)`; // 1 decimal point
+          const total = d3.sum(pieDataArray, d => d.value);
+          const percent = (d.data.value / total) * 100;
+          return `${d.data.key} (${percent.toFixed(1)}%)`;
         });
 
-    // Legend
-    const legend = svg1.append("g")
+      const legend = svg1.append("g")
         .attr("class", "legend")
         .attr("transform", "translate(" + (w - padding - 100) + "," + (padding) + ")");
 
-    legend.selectAll("rect")
+      legend.selectAll("rect")
         .data(pieDataArray)
         .enter()
         .append("rect")
@@ -103,7 +117,7 @@ d3.json("FINAL_HW2_EXTRACT_DATASET_subset.json").then(data => {
         .attr("height", 10)
         .attr("fill", (d, i) => color(i));
 
-    legend.selectAll("text")
+      legend.selectAll("text")
         .data(pieDataArray)
         .enter()
         .append("text")
@@ -111,55 +125,35 @@ d3.json("FINAL_HW2_EXTRACT_DATASET_subset.json").then(data => {
         .attr("y", (d, i) => padding + i * 20 + 9)
         .attr("font-size", 12)
         .text(d => d.key);
+    }).catch(error => {
+      console.error('Error loading JSON:', error);
+    });
+  </script>
 
-}).catch(error => {
-    console.error('Error loading JSON:', error);
-});
+  <!-- MAP MODULE -->
+  <script type="module">
+    import define from "./MAPindex.js";
+    import {Runtime, Inspector} from "./runtime.js";
+    const runtimeMap = new Runtime();
+    runtimeMap.module(define, Inspector.into(document.querySelector("#map-viz")));
+  </script>
 
-</script>
+  <!-- MOON MODULE -->
+  <script type="module">
+    import define from "./MOONindex.js";
+    import {Runtime, Inspector} from "./runtime.js";
+    const runtimeMoon = new Runtime();
+    runtimeMoon.module(define, Inspector.into(document.querySelector("#moon-viz")));
+  </script>
+
+  <!-- SCATTERPLOT MODULE -->
+  <script type="module">
+    import define from "./SCATTERindex.js";
+    import {Runtime, Inspector} from "./runtime.js";
+    const runtimeScatter = new Runtime();
+    runtimeScatter.module(define, Inspector.into(document.querySelector("#scatterplot-viz")));
+  </script>
 
 </body>
-
-<meta charset="utf-8">
-<title>MAP VISUAL</title>
-<link rel="stylesheet" type="text/css" href="./inspector.css">
-<body>
-<script type="module">
-
-import define from "./MAPindex.js";
-import {Runtime, Library, Inspector} from "./runtime.js";
-
-const runtime = new Runtime();
-const main = runtime.module(define, Inspector.into(document.body));
-
-</script>
-
-
-<meta charset="utf-8">
-<title>MOON VISUAL</title>
-<link rel="stylesheet" type="text/css" href="./inspector.css">
-<body>
-<script type="module">
-
-import define from "./MOONindex.js";
-import {Runtime, Library, Inspector} from "./runtime.js";
-
-const runtime = new Runtime();
-const main = runtime.module(define, Inspector.into(document.body));
-
-</script>
-
-<meta charset="utf-8">
-<title>Scatterplots Of Witness Count, Binge Drinking, Semantic Similarity, and Fuzzy Similarity</title>
-<link rel="stylesheet" type="text/css" href="./inspector.css">
-<body>
-<script type="module">
-
-import define from "./MOONindex.js";
-import {Runtime, Library, Inspector} from "./runtime.js";
-
-const runtime = new Runtime();
-const main = runtime.module(define, Inspector.into(document.body));
-
-</script>
 </html>
+
